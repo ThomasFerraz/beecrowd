@@ -1,0 +1,26 @@
+version: '3.3'
+
+services:
+  gateway:
+    container_name: ocelot-gateway
+    build:
+      context: ./src
+      dockerfile: Gateway/Dockerfile
+    ports:
+      - "7777:7777"
+    networks:
+      - evaluation-network
+
+  sales-api:
+    container_name: sales-api
+    build:
+      context: ./src
+      dockerfile: SalesApi/Dockerfile
+    ports:
+      - "8090:8090"
+    networks:
+      - evaluation-network
+
+networks:
+  evaluation-network:
+    external: true
