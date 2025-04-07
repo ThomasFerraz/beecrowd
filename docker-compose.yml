@@ -1,21 +1,19 @@
-version: "3.9"
-
 services:
   gateway:
     build:
       context: ./src/Gateway
       dockerfile: Dockerfile
     ports:
-      - "8000:80"
+      - "8000:8080"
     networks:
       - evaluation-network
 
   sales-api:
     build:
-      context: ./src/SalesApi
-      dockerfile: Dockerfile
+      context: ./src
+      dockerfile: SalesApi/Dockerfile
     ports:
-      - "5000:80"
+      - "5000:8080"
     networks:
       - evaluation-network
 

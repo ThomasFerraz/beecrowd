@@ -6,7 +6,7 @@
             "DownstreamHostAndPorts": [
                 {
                     "Host": "sales-api",
-                    "Port": 8090
+                    "Port": 8080
                 }
             ],
             "UpstreamPathTemplate": "/products",
@@ -18,7 +18,7 @@
             "DownstreamHostAndPorts": [
                 {
                     "Host": "sales-api",
-                    "Port": 8090
+                    "Port": 8080
                 }
             ],
             "UpstreamPathTemplate": "/sales",
@@ -26,6 +26,6 @@
         }
     ],
     "GlobalConfiguration": {
-        "BaseUrl": "http://ocelot-gateway:7777"
+        "BaseUrl": "http://gateway"
     }
 }
