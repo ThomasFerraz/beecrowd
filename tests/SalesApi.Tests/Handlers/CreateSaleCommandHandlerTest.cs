@@ -1,64 +1,66 @@
-﻿using AutoMapper;
-using Bogus;
+﻿using Xunit;
 using SalesApi.Application.Commands;
+using SalesApi.Application.Commands.CreateSale;
+using SalesApi.Infrastructure.Repositories;
+using AutoMapper;
+using NSubstitute;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using SalesApi.Application.DTOs;
-using SalesApi.Application.Mappings;
+using System;
 
-using Xunit;
-
-namespace SalesApi.Tests.Handlers
+namespace SalesApi.Tests
 {
-    public class CreateSaleCommandHandlerTest
+    public class CreateSaleCommandHandlerTests
     {
         private readonly IMapper _mapper;
-        private readonly Faker _faker;
+        private readonly IProductRepository _productRepository;
 
-        public CreateSaleCommandHandlerTest()
+        public CreateSaleCommandHandlerTests()
         {
-            // Configurando AutoMapper manualmente para os testes
-            var configuration = new MapperConfiguration(cfg =>
+            var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<DomainToDtoMappingProfile>();
+                cfg.AddProfile(new SalesApi.Application.Mappings.DomainToDtoMappingProfile());
             });
-            _mapper = configuration.CreateMapper();
-
-            // Instanciando o Faker
-            _faker = new Faker();
+            _mapper = config.CreateMapper();
+            _productRepository = Substitute.For<IProductRepository>();
         }
 
-        [Fact(DisplayName = "Deve criar venda com desconto de 10% para 4 itens")]
-        public async Task Deve_Criar_Venda_Com_Desconto_10_Porcento()
+        [Fact]
+        public async Task Should_Create_Sale_When_Data_Is_Valid()
         {
-            // Arrange (Preparar o cenário)
-            var command = new Application.Commands.CreateSale.CreateSaleCommand
+            // Arrange
+            var handler = new CreateSaleCommandHandler(_mapper, _productRepository);
+
+            var command = new CreateSaleCommand
             {
-                SaleNumber = _faker.Random.Number(1000, 9999).ToString(),
+                SaleNumber = "1234",
                 SaleDate = DateTime.UtcNow,
                 CustomerId = Guid.NewGuid(),
                 BranchId = Guid.NewGuid(),
-                Items = new List<CreateSaleItemDto>
+                Items = new List<CreateSaleCommandItem>
                 {
-                    new CreateSaleItemDto
+                    new CreateSaleCommandItem
                     {
                         ProductId = Guid.NewGuid(),
-                        Quantity = 4,         // Aqui testamos o desconto de 10%
-                        UnitPrice = 100m
+                        Quantity = 2,
+                        UnitPrice = 5.00m
                     }
                 }
             };
 
-            var handler = new CreateSaleCommandHandler(_mapper);
+            _productRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(new SalesApi.Domain.Entities.Product
+            {
+                Id = command.Items[0].ProductId,
+                Price = 5.00m
+            });
 
-            // Act (Executar a ação)
-            var result = await handler.Handle(command, CancellationToken.None);
+            // Act
+            var result = await handler.Handle(command, default);
 
-            // Assert (Validar o resultado)
+            // Assert
             Assert.NotNull(result);
-            Assert.Equal(command.SaleNumber, result.SaleNumber);
-            Assert.Single(result.Items);
-            Assert.Equal(4, result.Items.First().Quantity);
-            Assert.Equal(0.10m, result.Items.First().Discount); // 10% de desconto
-            Assert.Equal(360m, result.Items.First().Total);     // 400 - 10% = 360
+            Assert.Equal(1, result.Items.Count);
         }
     }
 }

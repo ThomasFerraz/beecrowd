@@ -15,7 +15,6 @@ namespace SalesApi.Domain.Entities
         public decimal Discount { get; set; }
         public decimal Total { get; set; }
         public bool IsCancelled { get; set; }
-
-        public Guid SaleId { get; set; }   // Relacionamento reverso (opcional)
+        public Guid SaleId { get; set; }
     }
 }

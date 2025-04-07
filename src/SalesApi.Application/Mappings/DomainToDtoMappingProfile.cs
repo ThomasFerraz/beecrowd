@@ -11,7 +11,7 @@ namespace SalesApi.Application.Mappings
         {
             CreateMap<Sale, SaleDto>();
             CreateMap<SaleItem, SaleItemDto>();
-            CreateMap<Product, Product>(); // Simples porque no Product não temos DTO ainda
+            CreateMap<Product, Product>();
         }
     }
 }
