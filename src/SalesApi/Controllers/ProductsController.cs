@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SalesApi.Domain.Entities;
+using SalesApi.Infrastructure.Repositories;
 
 namespace SalesApi.Controllers
 {
@@ -7,26 +8,33 @@ namespace SalesApi.Controllers
     [Route("[controller]")]
     public class ProductsController : ControllerBase
     {
-        private static readonly List<Product> Products = new();
+        private readonly IProductRepository _productRepository;
+
+        public ProductsController(IProductRepository productRepository)
+        {
+            _productRepository = productRepository;
+        }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
+            var products = await _productRepository.GetAllAsync();
+
             return Ok(new
             {
-                data = Products,
+                data = products,
                 status = "success",
                 message = "Operação concluída com sucesso"
             });
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Product product)
+        public async Task<IActionResult> Post([FromBody] Product product)
         {
             product.Id = Guid.NewGuid();
-            
-            Products.Add(product);
-            
+
+            await _productRepository.AddAsync(product);
+
             Console.WriteLine($"[EVENTO] ProductCreated: Produto {product.Id} criado - {product.Title}.");
 
             return Ok(new
@@ -34,8 +42,7 @@ namespace SalesApi.Controllers
                 data = product,
                 status = "success",
                 message = "Operação concluída com sucesso"
-            });            
-
+            });
         }
     }
 }

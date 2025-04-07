@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SalesApi.Domain\SalesApi.Domain.csproj" />
+    <ProjectReference Include="..\SalesApi.Infrastructure\SalesApi.Infrastructure.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

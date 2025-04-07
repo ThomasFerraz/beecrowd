@@ -15,7 +15,6 @@ namespace SalesApi.Domain.Entities
         public Guid BranchId { get; set; }
         public decimal TotalAmount { get; set; }
         public bool Cancelled { get; set; }
-
         public List<SaleItem> Items { get; set; } = new();
     }
 }

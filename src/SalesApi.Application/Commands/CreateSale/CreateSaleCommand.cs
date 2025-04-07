@@ -9,6 +9,6 @@ namespace SalesApi.Application.Commands.CreateSale
         public DateTime SaleDate { get; set; }
         public Guid CustomerId { get; set; }
         public Guid BranchId { get; set; }
-        public List<CreateSaleItemDto> Items { get; set; } = new();
+        public List<CreateSaleCommandItem> Items { get; set; } = new();
     }
 }
